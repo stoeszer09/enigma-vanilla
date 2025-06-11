@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="style.css">
   <title>Enigma</title>
 </head>
 <body>
@@ -11,13 +11,24 @@
 
     <div id="rotors" >
       <h2>Rotors</h2>
+      <div id="rotors-display-container">
+        <div id="rotor-slot-1" class="rotor-slot"></div>
+        <div id="rotor-slot-2" class="rotor-slot"></div>
+        <div id="rotor-slot-3" class="rotor-slot"></div>
+      </div>
     </div>
+
     <div id="light-panel">
       <h2>Light Panel</h2>
+      <div id="top-row-lights" class="light-row"></div>
+      <div id="middle-row-lights" class="light-row"></div>
+      <div id="bottom-row-lights" class="light-row"></div>
     </div>
+
     <div id="plubboard">
       <h2>Plugboard</h2>
     </div>
+    
   </div>
   <script src="js/main.js"></script>
 </body>
