@@ -20,6 +20,7 @@ const ROTOR_III = {
   wiring: 
     {  A: "B", B: "D", C: "F", D: "H", E: "J", F: "L", G: "C", H: "P", I: "R", J: "T", K: "X", L: "V", M: "Z", N: "N", O: "Y", P: "E", Q: "I", R: "W", S: "G", T: "A", U: "K", V: "M", W: "U", X: "S", Y: "Q", Z: "O"},
 }
+let keyIsDown = false
 
 const lightPanel = document.querySelector("#light-panel")
 const topRowContainer = document.querySelector("#top-row-lights")
@@ -69,21 +70,29 @@ displaySingleRotor(rotorSlot1, activeRotors[0], 0)
 displaySingleRotor(rotorSlot2, activeRotors[1], 1)
 displaySingleRotor(rotorSlot3, activeRotors[2], 2)
 
+function rotorOutput (input) {
+  let output = ""
+  for (let i = 0; i < 3; i++) {
+    output = activeRotors[i].rotorType.wiring[input]
+    input = output
+  }
+  for (let i = 2; i >= 0; i--) {
+    output = activeRotors[i].rotorType.wiring[input]
+    input = output
+  }
+  return output
+}
+
 document.addEventListener("keydown", e => {
+  if (keyIsDown) return
   const pressedKey = e.key.toUpperCase()
   if (ALPHABET.includes(pressedKey)) {
+    keyIsDown = true
     e.preventDefault()
 
-    let input = pressedKey
-
-    for (let i = 0; i < 3; i++) {
-      input = activeRotors[i].rotorType.wiring[input]
-    }
-    for (let i = 2; i >= 0; i--) {
-      input = activeRotors[i].rotorType.wiring[input]
-    }
+    const output = rotorOutput(pressedKey)
     
-    const lightElementID = `light-${input}`
+    const lightElementID = `light-${output}`
     const lightElement = document.getElementById(lightElementID)
     
     if (lightElement) {
@@ -95,12 +104,14 @@ document.addEventListener("keyup", e => {
   e.preventDefault()
   const releasedKey = e.key.toUpperCase()
   if (ALPHABET.includes(releasedKey)) {
-    
-    const lightElementID = `light-${releasedKey}`
+    const output = rotorOutput(releasedKey)
+
+    const lightElementID = `light-${output}`
     const lightElement = document.getElementById(lightElementID)
     
-    if (lightElement) {
+    if (lightElement && lightElement.classList.contains("active")) {
       lightElement.classList.remove("active")
+      keyIsDown = false
     }
   }
 })
