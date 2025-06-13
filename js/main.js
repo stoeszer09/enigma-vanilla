@@ -100,18 +100,20 @@ function updateRotorPosition(rotor) {
 }
 
 function updateRotorPositions() {
+  const initialRotor1Position = activeRotors[0].position
   updateRotorPosition(activeRotors[0])
   const rotor1PositionElement = document.getElementById('rotor-position-1')
   rotor1PositionElement.textContent = activeRotors[0].position
-  if (activeRotors[0].position === activeRotors[0].rotorType.notch) {
+  if (initialRotor1Position === activeRotors[0].rotorType.notch) {
+    const initialRotor2Position = activeRotors[1].position
     updateRotorPosition(activeRotors[1])
     const rotor2PositionElement = document.getElementById('rotor-position-2')
     rotor2PositionElement.textContent = activeRotors[1].position
-  }
-  if (activeRotors[1].position === activeRotors[1].rotorType.notch) {
-    updateRotorPosition(activeRotors[2])
-    const rotor3PositionElement = document.getElementById('rotor-position-3')
-    rotor3PositionElement.textContent = activeRotors[2].position
+    if (initialRotor2Position === activeRotors[1].rotorType.notch) {
+      updateRotorPosition(activeRotors[2])
+      const rotor3PositionElement = document.getElementById('rotor-position-3')
+      rotor3PositionElement.textContent = activeRotors[2].position
+    }
   }
 }
 
