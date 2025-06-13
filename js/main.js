@@ -83,6 +83,30 @@ function rotorOutput (input) {
   return output
 }
 
+function updateRotorPosition(rotor) {
+  const currentPosition = rotor.position
+  const currentPositionValue = ALPHABET.indexOf(currentPosition)
+  const newPositionValue = currentPositionValue + 1
+  const newPosition = newPositionValue > 25 ? ALPHABET[0] : ALPHABET[newPositionValue]
+  rotor.position = newPosition
+}
+
+function updateRotorPositions() {
+  updateRotorPosition(activeRotors[0])
+  const rotor1PositionElement = document.getElementById('rotor-position-1')
+  rotor1PositionElement.textContent = activeRotors[0].position
+  if (activeRotors[0].position === activeRotors[0].rotorType.notch) {
+    updateRotorPosition(activeRotors[1])
+    const rotor2PositionElement = document.getElementById('rotor-position-2')
+    rotor2PositionElement.textContent = activeRotors[1].position
+  }
+  if (activeRotors[1].position === activeRotors[1].rotorType.notch) {
+    updateRotorPosition(activeRotors[2])
+    const rotor3PositionElement = document.getElementById('rotor-position-3')
+    rotor3PositionElement.textContent = activeRotors[0].position
+  }
+}
+
 document.addEventListener("keydown", e => {
   if (keyIsDown) return
   const pressedKey = e.key.toUpperCase()
@@ -111,6 +135,7 @@ document.addEventListener("keyup", e => {
     
     if (lightElement && lightElement.classList.contains("active")) {
       lightElement.classList.remove("active")
+      updateRotorPositions()
       keyIsDown = false
     }
   }
