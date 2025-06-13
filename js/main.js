@@ -73,11 +73,19 @@ displaySingleRotor(rotorSlot3, activeRotors[2], 2)
 function rotorOutput (input) {
   let output = ""
   for (let i = 0; i < 3; i++) {
-    output = activeRotors[i].rotorType.wiring[input]
+    const currentPosition = activeRotors[i].position
+    const currentPositionValue = ALPHABET.indexOf(currentPosition)
+    const updatedInputValue = currentPositionValue + ALPHABET.indexOf(input)
+    const updatedInput = ALPHABET[updatedInputValue >= 26 ? 0 : updatedInputValue]
+    output = activeRotors[i].rotorType.wiring[updatedInput]
     input = output
   }
   for (let i = 2; i >= 0; i--) {
-    output = activeRotors[i].rotorType.wiring[input]
+    const currentPosition = activeRotors[i].position
+    const currentPositionValue = ALPHABET.indexOf(currentPosition)
+    const updatedInputValue = currentPositionValue + ALPHABET.indexOf(input)
+    const updatedInput = ALPHABET[updatedInputValue >= 26 ? 0 : updatedInputValue]
+    output = activeRotors[i].rotorType.wiring[updatedInput]
     input = output
   }
   return output
@@ -103,7 +111,7 @@ function updateRotorPositions() {
   if (activeRotors[1].position === activeRotors[1].rotorType.notch) {
     updateRotorPosition(activeRotors[2])
     const rotor3PositionElement = document.getElementById('rotor-position-3')
-    rotor3PositionElement.textContent = activeRotors[0].position
+    rotor3PositionElement.textContent = activeRotors[2].position
   }
 }
 
@@ -118,7 +126,6 @@ document.addEventListener("keydown", e => {
     
     const lightElementID = `light-${output}`
     const lightElement = document.getElementById(lightElementID)
-    
     if (lightElement) {
       lightElement.classList.add("active")
     }
