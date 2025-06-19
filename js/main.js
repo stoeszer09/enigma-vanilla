@@ -20,7 +20,27 @@ const ROTOR_III = {
   wiring: 
     {  A: "B", B: "D", C: "F", D: "H", E: "J", F: "L", G: "C", H: "P", I: "R", J: "T", K: "X", L: "V", M: "Z", N: "N", O: "Y", P: "E", Q: "I", R: "W", S: "G", T: "A", U: "K", V: "M", W: "U", X: "S", Y: "Q", Z: "O"},
 }
+const REFLECTOR = {
+  wiring: {
+    A: "Y", B: "R", C: "U", D: "H", E: "Q", F: "S", G: "L", H: "D", I: "P", J: "X", K: "N", L: "G",
+    M: "O", N: "K", O: "M", P: "I", Q: "E", R: "B", S: "F", T: "Z", U: "C", V: "W", W: "V", X: "J",
+    Y: "A", Z: "T"
+  },
+}
 let keyIsDown = false
+
+function buildRotorReverseWiring(rotor) {
+  rotor.reverseWiring = {}
+  for (const inputLetter in rotor.wiring) {
+    if (rotor.wiring.hasOwnProperty(inputLetter)) {
+      const outputLetter = rotor.wiring[inputLetter]
+      rotor.reverseWiring[outputLetter] = inputLetter
+    }
+  }
+}
+buildRotorReverseWiring(ROTOR_I)
+buildRotorReverseWiring(ROTOR_II)
+buildRotorReverseWiring(ROTOR_III)
 
 const lightPanel = document.querySelector("#light-panel")
 const topRowContainer = document.querySelector("#top-row-lights")
@@ -70,25 +90,42 @@ displaySingleRotor(rotorSlot1, activeRotors[0], 0)
 displaySingleRotor(rotorSlot2, activeRotors[1], 1)
 displaySingleRotor(rotorSlot3, activeRotors[2], 2)
 
-function rotorOutput (input) {
-  let output = ""
-  for (let i = 0; i < 3; i++) {
-    const currentPosition = activeRotors[i].position
-    const currentPositionValue = ALPHABET.indexOf(currentPosition)
-    const updatedInputValue = currentPositionValue + ALPHABET.indexOf(input)
-    const updatedInput = ALPHABET[updatedInputValue >= 26 ? 0 : updatedInputValue]
-    output = activeRotors[i].rotorType.wiring[updatedInput]
-    input = output
-  }
+function adjustInput(input, rotor) {
+  const currentPosition = rotor.position
+  const currentPositionValue = ALPHABET.indexOf(currentPosition)
+  const currentInputValue = ALPHABET.indexOf(input)
+  const updatedInputValue = (currentInputValue + currentPositionValue) % 26
+  const updatedInput = ALPHABET[updatedInputValue]
+  return updatedInput
+}
+function adjustOutput(output, rotor) {
+  const currentPosition = rotor.position
+  const currentPositionValue = ALPHABET.indexOf(currentPosition)
+  const currentOutputValue = ALPHABET.indexOf(output)
+  const updatedOutputValue = (currentOutputValue - currentPositionValue + 26) % 26
+  const updatedOutput = ALPHABET[updatedOutputValue]
+  return updatedOutput
+}
+
+function rotorOutput (pressedKey) {
+  let inputLetter = pressedKey
+  let outputLetter = ""
   for (let i = 2; i >= 0; i--) {
-    const currentPosition = activeRotors[i].position
-    const currentPositionValue = ALPHABET.indexOf(currentPosition)
-    const updatedInputValue = currentPositionValue + ALPHABET.indexOf(input)
-    const updatedInput = ALPHABET[updatedInputValue >= 26 ? 0 : updatedInputValue]
-    output = activeRotors[i].rotorType.wiring[updatedInput]
-    input = output
+    const rotor = activeRotors[i]
+    const adjustedInputLetter = adjustInput(inputLetter, rotor)
+    outputLetter = rotor.rotorType.wiring[adjustedInputLetter]
+    const adjustedOutputLetter = adjustOutput(outputLetter, rotor)
+    inputLetter = adjustedOutputLetter
   }
-  return output
+  inputLetter = REFLECTOR.wiring[inputLetter]
+  for (let i = 0; i < 3; i++) {
+    const rotor = activeRotors[i]
+    const adjustedInputLetter = adjustInput(inputLetter, rotor)
+    outputLetter = rotor.rotorType.reverseWiring[adjustedInputLetter]
+    const adjustedOutputLetter = adjustOutput(outputLetter, rotor)
+    inputLetter = adjustedOutputLetter
+  }
+  return inputLetter
 }
 
 function updateRotorPosition(rotor) {
@@ -125,6 +162,7 @@ document.addEventListener("keydown", e => {
     e.preventDefault()
 
     const output = rotorOutput(pressedKey)
+    console.log("output: ", output)
     
     const lightElementID = `light-${output}`
     const lightElement = document.getElementById(lightElementID)
