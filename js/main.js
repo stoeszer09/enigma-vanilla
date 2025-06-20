@@ -163,7 +163,8 @@ document.addEventListener("keydown", e => {
     e.preventDefault()
 
     const output = rotorOutput(pressedKey)
-    console.log("output: ", output)
+    const messageDisplay = document.getElementById('output-display')
+    messageDisplay.textContent += output
     
     const lightElementID = `light-${output}`
     const lightElement = document.getElementById(lightElementID)
