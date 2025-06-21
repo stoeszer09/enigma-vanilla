@@ -155,6 +155,12 @@ function updateRotorPositions() {
   }
 }
 
+const clearButton = document.getElementById('clear-output')
+clearButton.addEventListener('click', () => {
+  const messageDisplay = document.getElementById('output-display')
+  messageDisplay.textContent = ''
+})
+
 document.addEventListener("keydown", e => {
   if (keyIsDown) return
   const pressedKey = e.key.toUpperCase()
